@@ -34,7 +34,7 @@ public class User implements Serializable {
     @NotNull(message = "{required}")
     @DecimalMin(value = "-1.00", message = "工资不能小于-1.00")
     @DecimalMax(value = "999999999999.00", message = "工资不能超过999999999999.00")
-    /**@Range(min = 1L, max = 123123L, message = "年龄应为0-120")*/
+    /** @Range(min = 1L, max = 123123L, message = "年龄应为0-120") */
     private BigDecimal balance;
 
     @NotNull
