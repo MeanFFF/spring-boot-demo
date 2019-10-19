@@ -18,13 +18,13 @@ public class TestAop {
         // 1. 设置Pointcut
         nameMatchMethodPointcutAdvisor.setMappedName("hello");
         // 2. 设置Advice
-        nameMatchMethodPointcutAdvisor.setAdvice(new SubjectBeforeAdvice());
-
+        nameMatchMethodPointcutAdvisor.setAdvice(new ExceptionBarrierThrowsAdvice());
 
         ProxyFactory proxyFactory = new ProxyFactory();
         // 1. 设置目标对象
         proxyFactory.setTarget(new Subject());
         // 2. 设置Aspect
+        proxyFactory.setInterfaces(ISubject.class);
         proxyFactory.addAdvisor(nameMatchMethodPointcutAdvisor);
         ISubject subject = (ISubject) proxyFactory.getProxy();
         System.out.println("this is subject : " + subject.getClass().getName());
