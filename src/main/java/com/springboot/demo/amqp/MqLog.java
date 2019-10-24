@@ -1,5 +1,7 @@
 package com.springboot.demo.amqp;
 
+import java.io.Serializable;
+
 /**
  * description
  *
@@ -8,7 +10,7 @@ package com.springboot.demo.amqp;
  * @date 2019-10-23 17:08:57
  * @since 1.0
  */
-public class MqLog {
+public class MqLog implements Serializable {
     private Integer id;
     private Integer status;
     private Integer retryCount;

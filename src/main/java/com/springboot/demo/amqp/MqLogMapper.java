@@ -26,6 +26,6 @@ public interface MqLogMapper {
     @Insert("insert into mq_log(status, retry_count, uni_id) values (#{status}, #{retryCount}, #{uniId})")
     Integer insertMqLog(MqLog mqLog);
 
-    @Update("update mq_log set status = -1 where uni_id = #{uniId}")
-    Integer updateMqLogStatus(@Param("uniId")long uniId);
+    @Update("update mq_log set status = #{status} where uni_id = #{uniId}")
+    Integer updateMqLogStatus(@Param("uniId")long uniId, @Param("status") int status);
 }

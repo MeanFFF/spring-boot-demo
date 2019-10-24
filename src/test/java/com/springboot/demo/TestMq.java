@@ -22,8 +22,8 @@ public class TestMq {
     private MqSender mqSender;
     @Test
     public void send() {
-        for (int i = 0; i < 10; i++) {
-            mqSender.send(1);
-        }
+//        for (int i = 0; i < 10; i++) {
+////            mqSender.send(1);
+//        }
     }
 }

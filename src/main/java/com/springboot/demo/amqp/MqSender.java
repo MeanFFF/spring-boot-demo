@@ -1,12 +1,16 @@
 package com.springboot.demo.amqp;
 
-import org.apache.ibatis.annotations.Mapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.UUID;
 
 /**
  * description
@@ -23,26 +27,40 @@ public class MqSender {
     @Autowired
     @SuppressWarnings("all")
     private MqLogMapper mqLogMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private final RabbitTemplate.ConfirmCallback confirmCallback = new RabbitTemplate.ConfirmCallback() {
         @Override
         public void confirm(CorrelationData correlationData, boolean ack, String cause) {
             System.err.println("correlationData: " + correlationData);
+            String messageId = correlationData.getId();
             if (ack) {
+                assert messageId != null;
+                mqLogMapper.updateMqLogStatus(Long.parseLong(messageId), 1);
                 System.out.println("this message has been send");
             } else {
-                MqLog mqLog = mqLogMapper.getMqLog(Long.parseLong(Objects.requireNonNull(correlationData.getId())));
-                if (mqLog.getRetryCount() > 3) {
-                    mqLogMapper.updateMqLogStatus(mqLog.getUniId());
-                }
                 System.out.println("this message need retry");
             }
         }
     };
 
-    public void send(Object data) {
+    public void send(MqLog mqLog) {
         rabbitTemplate.setConfirmCallback(confirmCallback);
-        rabbitTemplate.convertAndSend("trusty_topic", "trusty","this is the data " + data);
+        CorrelationData correlationData = new CorrelationData();
+        correlationData.setId(String.valueOf(mqLog.getUniId()));
+        Message message = null;
+        try {
+            message = MessageBuilder.withBody(objectMapper.writeValueAsBytes(mqLog))
+                    .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                    .setContentEncoding("utf-8")
+                    .setMessageId(UUID.randomUUID()+"")
+                    .setHeader("uniId", mqLog.getUniId())
+                    .build();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        rabbitTemplate.convertAndSend("trusty_topic", "trusty",message, correlationData);
     }
 
 }
