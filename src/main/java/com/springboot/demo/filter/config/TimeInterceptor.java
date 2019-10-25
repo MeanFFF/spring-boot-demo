@@ -1,6 +1,5 @@
 package com.springboot.demo.filter.config;
 
-import org.apache.ibatis.plugin.Intercepts;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
