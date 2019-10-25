@@ -1,5 +1,7 @@
 package com.springboot.demo.linkedlist;
 
+import org.springframework.messaging.handler.annotation.Header;
+
 /**
  * description 删除时要考虑：只有一个结点时；有多个结点时
  *
@@ -134,6 +136,26 @@ public class SingleLinkedList {
         return head;
     }
 
+    public Node reverseBetween(int m, int n) {
+        Node cur = head;
+        Node pre = null;
+        Node temp;
+        int curNum = 0;
+        while(cur != null) {
+            curNum ++;
+            while (curNum > m && curNum < n) {
+                temp = cur.next;
+                cur.next = pre;
+                pre = cur;
+                cur = temp;
+                curNum ++;
+            }
+            pre = cur;
+            cur = cur.next;
+        }
+        return head;
+    }
+
     public boolean isEmpty() {
         return size <= 0;
     }
@@ -144,8 +166,8 @@ public class SingleLinkedList {
         singleList.addHead("B");
         singleList.addHead("C");
         singleList.addHead("D");
-        singleList.display();
-        singleList.reverse();
+        singleList.addHead("E");
+        singleList.reverseBetween(2, 4);
         singleList.display();
     }
 }
