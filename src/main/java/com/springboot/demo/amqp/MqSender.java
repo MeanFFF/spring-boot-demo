@@ -1,16 +1,9 @@
 package com.springboot.demo.amqp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * description
@@ -27,8 +20,6 @@ public class MqSender {
     @Autowired
     @SuppressWarnings("all")
     private MqLogMapper mqLogMapper;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private final RabbitTemplate.ConfirmCallback confirmCallback = new RabbitTemplate.ConfirmCallback() {
         @Override
@@ -49,18 +40,7 @@ public class MqSender {
         rabbitTemplate.setConfirmCallback(confirmCallback);
         CorrelationData correlationData = new CorrelationData();
         correlationData.setId(String.valueOf(mqLog.getUniId()));
-        Message message = null;
-        try {
-            message = MessageBuilder.withBody(objectMapper.writeValueAsBytes(mqLog))
-                    .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                    .setContentEncoding("utf-8")
-                    .setMessageId(UUID.randomUUID()+"")
-                    .setHeader("uniId", mqLog.getUniId())
-                    .build();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        rabbitTemplate.convertAndSend("trusty_topic", "trusty",message, correlationData);
+        rabbitTemplate.convertAndSend("trusty_topic", "trusty", "hello", correlationData);
     }
 
 }

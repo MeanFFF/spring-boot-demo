@@ -1,5 +1,6 @@
 package com.springboot.demo.amqp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,7 @@ public class MqController {
     @Autowired
     private MqService mqService;
     @RequestMapping("/mqtest")
-    public String trustyMq() {
+    public String trustyMq() throws JsonProcessingException {
         mqService.testService();
         return null;
     }

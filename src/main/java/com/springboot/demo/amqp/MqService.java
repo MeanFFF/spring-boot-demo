@@ -1,6 +1,7 @@
 package com.springboot.demo.amqp;
 
 import cn.hutool.core.lang.Snowflake;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,7 +26,7 @@ public class MqService {
     @SuppressWarnings("all")
     MqLogMapper mqLogMapper;
 
-    public void testService() {
+    public void testService() throws JsonProcessingException {
         System.out.println("this is a joke");
 
         long uniId = new Snowflake(12L, 31L).nextId();
