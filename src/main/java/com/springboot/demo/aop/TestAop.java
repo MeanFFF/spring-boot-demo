@@ -1,6 +1,8 @@
 package com.springboot.demo.aop;
 
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.aop.support.NameMatchMethodPointcutAdvisor;
 
 /**
@@ -18,16 +20,32 @@ public class TestAop {
         // 1. 设置Pointcut
         nameMatchMethodPointcutAdvisor.setMappedName("hello");
         // 2. 设置Advice
-        nameMatchMethodPointcutAdvisor.setAdvice(new ExceptionBarrierThrowsAdvice());
+        nameMatchMethodPointcutAdvisor.setAdvice(new PerformanceMethodInterceptor());
 
+        // 1. 声明Advisor
+        DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
+        // 2. 声明Pointcut
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("hello");
+        // 3. 声明Advice
+        PerformanceMethodInterceptor advice = new PerformanceMethodInterceptor();
+        // 4. 设置Pointcut
+        defaultPointcutAdvisor.setPointcut(pointcut);
+        // 5. 设置Advice
+        defaultPointcutAdvisor.setAdvice(advice);
+
+        // 1. 声明ProxyFactory
         ProxyFactory proxyFactory = new ProxyFactory();
-        // 1. 设置目标对象
+        // 2. 设置目标对象
         proxyFactory.setTarget(new Subject());
-        // 2. 设置Aspect
-        proxyFactory.setInterfaces(ISubject.class);
+        // 3. 设置Aspect
         proxyFactory.addAdvisor(nameMatchMethodPointcutAdvisor);
+        // 4. 设置代理接口类型
+        proxyFactory.setInterfaces(new Class[]{ISubject.class});
+        // 4. 获取织入后的代理对象
         ISubject subject = (ISubject) proxyFactory.getProxy();
-        System.out.println("this is subject : " + subject.getClass().getName());
+        System.out.println(subject.getClass().getName());
+        // 5. 调用方法
         subject.hello();
     }
 }

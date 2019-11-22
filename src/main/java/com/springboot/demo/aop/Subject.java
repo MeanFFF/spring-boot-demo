@@ -14,6 +14,5 @@ public class Subject implements ISubject {
     @Override
     public void hello() {
         System.out.println("gogogo");
-        throw new RuntimeException();
     }
 }
